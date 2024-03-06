@@ -1,9 +1,15 @@
 const express = require('express'),
-      morgan = require('morgan');
+      morgan = require('morgan'),
+      fs = require('fs'),
+      path = require('path');
 
 const app = express();
 
-app.use(morgan('combined')); //Morgan middleware to log all requests
+// setup logging
+const logFilePath = path.join(__dirname, 'log.txt');
+const accessLogStream = fs.createWriteStream(logFilePath, {flags: 'a'});
+
+app.use(morgan('combined', {stream: accessLogStream}));  // enable morgan logging to 'log.txt'
 
 //Express GET route at the endpoint "/movies"
 app.get('/movies', (req, res) => {

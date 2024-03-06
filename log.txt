@@ -52,3 +52,6 @@ Timestamp: Wed Feb 28 2024 23:33:21 GMT-0600 (Central Standard Time)
 URL: /favicon.ico
 Timestamp: Wed Feb 28 2024 23:33:21 GMT-0600 (Central Standard Time)
 
+::1 - - [06/Mar/2024:02:57:57 +0000] "GET / HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+::1 - - [06/Mar/2024:02:58:02 +0000] "GET /movies HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+::1 - - [06/Mar/2024:02:58:10 +0000] "GET /documentation.html HTTP/1.1" 304 - "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
