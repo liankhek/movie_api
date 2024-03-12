@@ -13,11 +13,91 @@
         Welcome to the Movie API documentation.
         This API is part of the full-stack JavaScript development project, showcasing mastery in technologies like MongoDB, Express, React, and Node.js (MERN stack). The Movie API provides a comprehensive server-side solution for managing movie information, including details about movies, directors, and genres.
     </p>
-    <br>
     <h3>Purpose</h3>
     <p>
         The primary goal of the Movie API is to serve movie enthusiasts by offering access to information about different movies, directors, and genres. Users can retrieve data on movies, update their profiles, add movies to their favorites, and more.
     </p>
+
+    <h4>Get List of Movies</h4>
+    <ul>
+        <li>Endpoint URL: <code>/movies</code></li>
+        <li>Method Type: <code>GET</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
+
+    <h4>Get Movie Details by Title</h4>
+    <ul>
+        <li>Endpoint URL: <code>/movies/:title</code></li>
+        <li>Method Type: <code>GET</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
+
+    <h4>Get Genre Details by Genre Name</h4>
+    <ul>
+        <li>Endpoint URL: <code>/movies/genre/:genreName</code></li>
+        <li>Method Type: <code>GET</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
+
+    <h4>Get Director Details by Director Name</h4>
+    <ul>
+        <li>Endpoint URL: <code>/movies/directors/:directorName</code></li>
+        <li>Method Type: <code>GET</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
+
+    <h4>Create New User</h4>
+    <ul>
+        <li>Endpoint URL: <code>/users</code></li>
+        <li>Method Type: <code>POST</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: JSON (Example: <code>{"name": "John Doe"}</code>)</li>
+        <li>Response Data Format: JSON (Example: <code>{"id": 1, "name": "John Doe", "favoriteMovies": []}</code>)</li>
+    </ul>
+
+    <h4>Update User Information(name)</h4>
+    <ul>
+        <li>Endpoint URL: <code>/users/:id</code></li>
+        <li>Method Type: <code>PUT</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: JSON (Example: <code>{"name": "New Name"}</code>)</li>
+        <li>Response Data Format: JSON (Example: <code>{"id": 1, "name": "New Name", "favoriteMovies": []}</code>)</li>
+    </ul>
+
+    <h4>Add Movie to User's Favorite List</h4>
+    <ul>
+        <li>Endpoint URL: <code>/users/:id/:movieTitle</code></li>
+        <li>Method Type: <code>POST</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
+
+    <h4>Remove Movie from User's Favorite List</h4>
+    <ul>
+        <li>Endpoint URL: <code>/users/:id/:movieTitle</code></li>
+        <li>Method Type: <code>DELETE</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
+
+    <h4>Delete User</h4>
+    <ul>
+        <li>Endpoint URL: <code>/users/:id</code></li>
+        <li>Method Type: <code>DELETE</code></li>
+        <li>Query Parameters: None</li>
+        <li>Request Body: None</li>
+        <li>Response Data Format: JSON</li>
+    </ul>
 
 </body>
 </html>
