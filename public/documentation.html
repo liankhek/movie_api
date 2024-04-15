@@ -18,86 +18,96 @@
         The primary goal of the Movie API is to serve movie enthusiasts by offering access to information about different movies, directors, and genres. Users can retrieve data on movies, update their profiles, add movies to their favorites, and more.
     </p>
 
-    <h4>Get List of Movies</h4>
-    <ul>
-        <li>Endpoint URL: <code>/movies</code></li>
-        <li>Method Type: <code>GET</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
-    <h4>Get Movie Details by Title</h4>
-    <ul>
-        <li>Endpoint URL: <code>/movies/:title</code></li>
-        <li>Method Type: <code>GET</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
-    <h4>Get Genre Details by Genre Name</h4>
-    <ul>
-        <li>Endpoint URL: <code>/movies/genre/:genreName</code></li>
-        <li>Method Type: <code>GET</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
-    <h4>Get Director Details by Director Name</h4>
-    <ul>
-        <li>Endpoint URL: <code>/movies/directors/:directorName</code></li>
-        <li>Method Type: <code>GET</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
-    <h4>Create New User</h4>
-    <ul>
-        <li>Endpoint URL: <code>/users</code></li>
-        <li>Method Type: <code>POST</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: JSON (Example: <code>{"name": "John Doe"}</code>)</li>
-        <li>Response Data Format: JSON (Example: <code>{"id": 1, "name": "John Doe", "favoriteMovies": []}</code>)</li>
-    </ul>
-
-    <h4>Update User Information(name)</h4>
-    <ul>
-        <li>Endpoint URL: <code>/users/:id</code></li>
-        <li>Method Type: <code>PUT</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: JSON (Example: <code>{"name": "New Name"}</code>)</li>
-        <li>Response Data Format: JSON (Example: <code>{"id": 1, "name": "New Name", "favoriteMovies": []}</code>)</li>
-    </ul>
-
-    <h4>Add Movie to User's Favorite List</h4>
-    <ul>
-        <li>Endpoint URL: <code>/users/:id/:movieTitle</code></li>
-        <li>Method Type: <code>POST</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
-    <h4>Remove Movie from User's Favorite List</h4>
-    <ul>
-        <li>Endpoint URL: <code>/users/:id/:movieTitle</code></li>
-        <li>Method Type: <code>DELETE</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
-    <h4>Delete User</h4>
-    <ul>
-        <li>Endpoint URL: <code>/users/:id</code></li>
-        <li>Method Type: <code>DELETE</code></li>
-        <li>Query Parameters: None</li>
-        <li>Request Body: None</li>
-        <li>Response Data Format: JSON</li>
-    </ul>
-
+    <h2>ENDPOINTS AND URLs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>REQUEST</th>
+                <th>URL</th>
+                <th>HTTP METHOD</th>
+                <th>REQUEST BODY DATA FORMAT</th>
+                <th>RESPONSE BODY DATA FORMAT</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Return a list of ALL users</td>
+                <td>/users</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about all users</td>
+            </tr>
+            <tr>
+                <td>Create user</td>
+                <td>/users</td>
+                <td>POST</td>
+                <td>A JSON object holding data about the user to add, structured like:</td>
+                <td>A JSON object holding data about a userid, username, email, password, birthDate, favorite movies.</td>
+            </tr>
+            <tr>
+                <td>Update user</td>
+                <td>/users/:Username</td>
+                <td>PUT</td>
+                <td>A JSON object holding data to be updated</td>
+                <td>A JSON object holding data about a single user.</td>
+            </tr>
+            <tr>
+                <td>Create user's favorite movie</td>
+                <td>/users/:Username/movies/:movieName</td>
+                <td>POST</td>
+                <td>None</td>
+                <td>A JSON object holding data about the updated user with the added movie.</td>
+            </tr>
+            <tr>
+                <td>Delete user by username</td>
+                <td>/users/:Username</td>
+                <td>DELETE</td>
+                <td>None</td>
+                <td>A text message indicating whether the user was successfully removed.</td>
+            </tr>
+            <tr>
+                <td>Return list of ALL movies</td>
+                <td>/movies</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about all movies</td>
+            </tr>
+            <tr>
+                <td>Return movie data by title name</td>
+                <td>/movies/:Title</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about the movie.</td>
+            </tr>
+            <tr>
+                <td>Get movie by ID</td>
+                <td>/movies/id/:idNumber</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about the movie.</td>
+            </tr>
+            <tr>
+                <td>Return genres from movies list</td>
+                <td>/movies/genre/:genreName</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about the movies related to specified genre.</td>
+            </tr>
+            <tr>
+                <td>Return genres from genres list</td>
+                <td>/genre/:genreName</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about the genre.</td>
+            </tr>
+            <tr>
+                <td>Return directors from directors list</td>
+                <td>/directors/:directorName</td>
+                <td>GET</td>
+                <td>None</td>
+                <td>A JSON object holding data about the director.</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>
