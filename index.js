@@ -19,57 +19,29 @@ const Movies = Models.Movie,
 // Allows Mongoose to connect to the database
 mongoose.connect("mongodb://localhost:27017/cfDB", { useNewUrlParser: true, useUnifiedTopology: true });
 
-/*
-// setup logging
-const logFilePath = path.join(__dirname, "log.txt");
-const accessLogStream = fs.createWriteStream(logFilePath, {flags: "a"});
-
-app.use(morgan("combined", {stream: accessLogStream}));  // enable morgan logging to 'log.txt'
-
-//Express GET route at the endpoint "/movies"
-app.get("/movies", (req, res) => {
-    // Top 10 movies simple data
-    const topMovies = [
-        {title: "Movie 1", rating: 9},
-        {title: "Movie 2", rating: 8},
-        {title: "Movie 3", rating: 6},
-        {title: "Movie 4", rating: 7},
-        {title: "Movie 5", rating: 9},
-        {title: "Movie 6", rating: 8},
-        {title: "Movie 7", rating: 9},
-        {title: "Movie 8", rating: 5},
-        {title: "Movie 9", rating: 8},
-        {title: "Movie 10", rating: 7}
-    ];
-    res.json(topMovies);
-});
-
-// Use express.static to serve "documentation.html" from the public folder
-app.use(express.static("public"));
-
-// Error handling Middleware
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).send("Something went wrong!");
-});
-
-*/
-
-app.use(bodyParser.json());
 
 // Midlware(log requestss to server)
 app.use(morgan("common"));
+app.use(bodyParser.json());
+
+let auth = require('./auth')(app); // ensures that Express is available in “auth.js” file
+const passport = require('passport');
+require('./passport');
 
 // import auth into index
+app.use(bodyParser.urlencoded({ extended: true }));
 
-// default text response when at /
+
+
+
+//------------- default text response when at /
 app.get("/", (req, res) => {
     res.send("Welcome to myFlix!");
 });
 
 // return JSON object when at /movies
-app.get("/movies", (req, res) => {
-    Movies.find()
+app.get("/movies", passport.authenticate("jwt", { session: false}), async (req, res) => {
+    await Movies.find()
         .then ((movies) => {
             res.status(201).json(movies);
         })
@@ -165,7 +137,7 @@ app.post("/users", (req, res) => {
     Users.findOne({ Username: req.body.Username }) // check if the provided username already exists
         .then((user) => { // Handling Existing User
             if (user) {
-                return res.status(400).send(req.body.Username + "already exists");
+                return res.status(400).send(req.body.Username + " already exists");
             } 
             else {
                 //If the user doesn’t exist, use Mongoose’s 'create' command & create new user
@@ -173,10 +145,11 @@ app.post("/users", (req, res) => {
                     Username: req.body.Username, // req.body is the request that the user sends
                     Password: req.body.Password,
                     Email: req.body.Email,
-                    Birthday: req.body.Birthday
+                    Birthday: req.body.Birthday,
+                    FavoriteMovies: req.body.FavoriteMovies
                 })
                 .then ((user) => {
-                    res.status(201).json(user) // Return newly created user document in JSON format
+                    res.status(201).json(user); 
                 })
                 .catch ((error) => {
                     console.error(error);
