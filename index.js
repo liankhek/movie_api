@@ -150,8 +150,8 @@ app.get("/movies/director/:directorName", passport.authenticate("jwt", { session
 }*/
 
 // Allow users to register
-app.post("/users", (req, res) => {
-    Users.findOne({ Username: req.body.Username }) // check if the provided username already exists
+app.post("/users", async (req, res) => {
+    await Users.findOne({ Username: req.body.Username }) // check if the provided username already exists
         .then((user) => { // Handling Existing User
             if (user) {
                 return res.status(400).send(req.body.Username + " already exists");
@@ -160,10 +160,9 @@ app.post("/users", (req, res) => {
                 //If the user doesn’t exist, use Mongoose’s 'create' command & create new user
                 Users.create ({ 
                     Username: req.body.Username, // req.body is the request that the user sends
-                    Password: req.body.Password,
+                    Password: hashedPassword,
                     Email: req.body.Email,
                     Birthday: req.body.Birthday,
-                    FavoriteMovies: req.body.FavoriteMovies
                 })
                 .then ((user) => {
                     res.status(201).json(user); 
@@ -171,7 +170,7 @@ app.post("/users", (req, res) => {
                 .catch ((error) => {
                     console.error(error);
                     res.status(500).send("Error: " + error);
-                })
+                });
             }
         })
         .catch ((error) => {
@@ -215,7 +214,7 @@ app.put('/users/:Username', passport.authenticate("jwt", { session: false }), as
 
 // Allow user to Deregister
 app.delete('/users/:Username', passport.authenticate("jwt", { session: false }), async (req, res) => {
-    await Users.findOneAndDelete({ Username: req.params.Username }) // Change this line
+    await Users.findOneAndDelete({ Username: req.params.Username }) 
       .then((user) => {
         if (!user) {
           res.status(400).send(req.params.Username + ' was not found');
