@@ -24,13 +24,30 @@ mongoose.connect("mongodb://localhost:27017/cfDB", { useNewUrlParser: true, useU
 app.use(morgan("common"));
 app.use(bodyParser.json());
 
+const cors = require('cors');
+app.use(cors());
+/* Want only certain origins to be given access,replace app.use(cors()); with the following code:
+
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
+      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
+      return callback(new Error(message ), false);
+    }
+    return callback(null, true);
+  }
+}));
+ */
+
 let auth = require('./auth')(app); // ensures that Express is available in “auth.js” file
 const passport = require('passport');
 require('./passport');
 
 // import auth into index
 app.use(bodyParser.urlencoded({ extended: true }));
-
 
 
 
@@ -54,7 +71,7 @@ app.get("/movies", passport.authenticate("jwt", { session: false}), async (req, 
 // ---------- READ in Mongoose---------------
 
 // Get all users
-app.get("/users", (req, res) => {
+app.get("/users", passport.authenticate("jwt", { session: false }), (req, res) => {
     Users.find()
       .then((users) => {
         res.status(201).json(users);
@@ -66,7 +83,7 @@ app.get("/users", (req, res) => {
 });
 
 // Get a user by username
-app.get("/users/:Username", (req, res) => {
+app.get("/users/:Username", passport.authenticate("jwt", { session: false }), (req, res) => {
     Users.findOne({ Username: req.params.Username })
       .then((users) => {
         res.json(users);
@@ -78,7 +95,7 @@ app.get("/users/:Username", (req, res) => {
 });
 
 // Get JSON movie info when looking for specific title
-app.get("/movies/:Title", (req, res) => {
+app.get("/movies/:Title", passport.authenticate("jwt", { session: false }), (req, res) => {
     Movies.findOne({ Title: req.params.Title })
         .then((movie) => {
             res.json(movie);
@@ -90,7 +107,7 @@ app.get("/movies/:Title", (req, res) => {
 });
 
 // GET JSON genre info when looking for specific genre
-app.get("/movies/genre/:genre", (req, res) => {
+app.get("/movies/genre/:genre", passport.authenticate("jwt", { session: false }), (req, res) => {
       Movies.find({ "Genre.Name": req.params.genre })
         .then((movie) => {
           if (!movie.length) {
@@ -106,7 +123,7 @@ app.get("/movies/genre/:genre", (req, res) => {
     }
   );
 // GET info on director when looking for specific director
-app.get("/movies/director/:directorName", (req, res) => {
+app.get("/movies/director/:directorName", passport.authenticate("jwt", { session: false }), (req, res) => {
     Movies.findOne({ "Director.Name": req.params.directorName })
       .then((director) => {
         if (!director) {
@@ -167,28 +184,37 @@ app.post("/users", (req, res) => {
 // ----------- UPDATE in Mongoose ------------------
 
 // allow users to update their user info
-app.put('/users/:Username', async (req, res) => {
-    await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
-      {
-        Username: req.body.Username,
-        Password: req.body.Password,
-        Email: req.body.Email,
-        Birthday: req.body.Birthday
-      }
-    },
-    { new: true }) // This line makes sure that the updated document is returned
-    .then((updatedUser) => {
-      res.json(updatedUser);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    })
+app.put('/users/:Username', passport.authenticate("jwt", { session: false }), async (req, res) => {
+    // Condition to check user
+    if(req.user.Username !== req.params.Username){
+        return res.status(400).send("Permission denied");
+    }
+    // Condition End
+    await Users.findOneAndUpdate (
+        { Username: req.params.Username }, 
+        { $set:
+            {
+                Username: req.body.Username,
+                Password: req.body.Password,
+                Email: req.body.Email,
+                Birthday: req.body.Birthday
+            }
+        },
+        { new: true } // This line makes sure that the updated document is returned
+    ) 
+
+        .then((updatedUser) => {
+            res.json(updatedUser);
+        })
+        .catch((err) => {
+            console.error(err);
+            res.status(500).send("Error: " + err);
+        })
   
-  });
+});
 
 // Allow user to Deregister
-app.delete('/users/:Username', async (req, res) => {
+app.delete('/users/:Username', passport.authenticate("jwt", { session: false }), async (req, res) => {
     await Users.findOneAndDelete({ Username: req.params.Username }) // Change this line
       .then((user) => {
         if (!user) {
@@ -204,7 +230,7 @@ app.delete('/users/:Username', async (req, res) => {
 });
 
 // Add movie to username's list
-app.post("/users/:Username/movies/:movieName", (req, res) => {
+app.post("/users/:Username/movies/:movieName", passport.authenticate("jwt", { session: false }), (req, res) => {
     const { Username, movieName } = req.params;
     Movies.findOne({ Title: movieName })
         .then((movie) => {
@@ -231,7 +257,7 @@ app.post("/users/:Username/movies/:movieName", (req, res) => {
 });
 
 // Remove movie form username's list
-app.delete("/users/:Username/movies/:MovieID", (req, res) => {
+app.delete("/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }), (req, res) => {
     Users.findOneAndUpdate (
         { Username: req.params.Username },
         { $pull: { FavoriteMovies: req.params.MovieID } },
@@ -252,7 +278,7 @@ app.delete("/users/:Username/movies/:MovieID", (req, res) => {
 // access documentation.html using express.static
 app.use("/documentation", express.static("public"));
 
-// error handling
+// error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).send("Error");
