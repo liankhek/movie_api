@@ -9,6 +9,7 @@ const express = require("express"),
       Models = require("./models.js");
 
 const app = express();
+const { check, validationResult } = require("express-validator");
 
 const Movies = Models.Movie,
       Users = Models.User,
@@ -150,7 +151,22 @@ app.get("/movies/director/:directorName", passport.authenticate("jwt", { session
 }*/
 
 // Allow users to register
-app.post("/users", async (req, res) => {
+app.post("/users",
+[
+    check("Username", "Username must be at least 5 characters").isLength({ min: 5 }),
+    check("Username", "Username can only contain alphanumeric characters").isAlphanumeric(),
+    check("Password", "Password must not be empty").not().isEmpty(),
+    check("Email", "Invalid email address").isEmail()
+],
+async (req, res) => {
+    let errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
+
+    const hashedPassword = Users.hashedPassword(req.body.Password);
+
     await Users.findOne({ Username: req.body.Username }) // check if the provided username already exists
         .then((user) => { // Handling Existing User
             if (user) {
@@ -183,7 +199,19 @@ app.post("/users", async (req, res) => {
 // ----------- UPDATE in Mongoose ------------------
 
 // allow users to update their user info
-app.put('/users/:Username', passport.authenticate("jwt", { session: false }), async (req, res) => {
+app.put('/users/:Username',
+passport.authenticate("jwt", { session: false }),
+[
+    check("Username", "Username must be at least 5 characters").isLength({ min: 5 }),
+    check("Username", "Username can only contain alphanumeric characters").isAlphanumeric(),
+    check("Email", "Invalid email address").isEmail(),
+    check("Password", "Password must not be empty").not().isEmpty()
+],
+async (req, res) => {
+    const errors = validationResult(req);
+    if (!error.isEmpty()) {
+        return res.status(422).json({ errors: errors.array() });
+    }
     // Condition to check user
     if(req.user.Username !== req.params.Username){
         return res.status(400).send("Permission denied");
@@ -201,7 +229,6 @@ app.put('/users/:Username', passport.authenticate("jwt", { session: false }), as
         },
         { new: true } // This line makes sure that the updated document is returned
     ) 
-
         .then((updatedUser) => {
             res.json(updatedUser);
         })
@@ -284,4 +311,7 @@ app.use((err, req, res, next) => {
 });
 
 // listen on port
-app.listen(8080, () => console.log("The app is listening on port 8080"))
+const port = process.env.PORT || 8080;
+app.listen(port, '0.0.0.0',() => {
+ console.log('Listening on Port ' + port);
+});
