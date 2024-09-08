@@ -18,7 +18,9 @@ const Movies = Models.Movie,
 
 
 // Allows Mongoose to connect to the database
-mongoose.connect("mongodb://localhost:27017/cfDB", { useNewUrlParser: true, useUnifiedTopology: true });
+//mongoose.connect("mongodb://localhost:27017/myflixDB", { useNewUrlParser: true, useUnifiedTopology: true });
+
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 // Midlware(log requestss to server)
