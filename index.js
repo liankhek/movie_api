@@ -20,7 +20,12 @@ const Movies = Models.Movie,
 // Allows Mongoose to connect to the database
 //mongoose.connect("mongodb://localhost:27017/myflixDB", { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(process.env.CONNECTION_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Database connected successfully'))
+.catch((err) => console.log('Error connecting to database:', err));
 
 
 // Midlware(log requestss to server)
@@ -313,7 +318,7 @@ app.use((err, req, res, next) => {
 });
 
 // listen on port
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
 });
