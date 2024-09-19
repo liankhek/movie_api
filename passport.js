@@ -40,12 +40,13 @@ passport.use(new LocalStrategy(
 passport.use(new JWTStrategy({
   jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(), // Extract JWT “bearer token" from header  of the HTTP request
   secretOrKey: 'your_jwt_secret' // Define JWT secret key
-}, async (jwtPayload, callback) => { // Define callback function for JWTStrategy
+}, 
+async (jwtPayload, callback) => { // Define callback function for JWTStrategy
   return await Users.findById(jwtPayload._id)
     .then((user) => {
       return callback(null, user);
     })
     .catch((error) => {
-      return callback(error)
+      return callback(error);
     });
 }));

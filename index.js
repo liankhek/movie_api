@@ -172,7 +172,7 @@ async (req, res) => {
         return res.status(422).json({ errors: errors.array() });
     }
 
-    const hashedPassword = bcrypt.hashSync(req.body.Password, 10);
+    const hashedPassword = bcrypt.hashSync(req.body.Password,10);
 
     await Users.findOne({ Username: req.body.Username }) // check if the provided username already exists
         .then((user) => { // Handling Existing User
