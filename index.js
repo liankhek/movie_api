@@ -144,26 +144,22 @@ let hashedPassword = Users.hashPassword(req.body.Password);
 );
 
 // Add Movie with Movie ID
-app.post(
-  "/users/:Username/movies/:MovieID",
-  passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    await Users.findOneAndUpdate(
+app.post('/users/:Username/favorites', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  await Users.findOneAndUpdate(
       { Username: req.params.Username },
       {
-        $push: { FavoriteMovies: req.params.MovieID },
+          $push: { FavoriteMovies: req.body.FavoriteMovies },
       },
       { new: true }
-    ) // This line makes sure that the updated document is returned
+  )
       .then((updatedUser) => {
-        res.json(updatedUser);
+          res.json(updatedUser);
       })
       .catch((err) => {
-        console.error(err);
-        res.status(500).send("Error: " + err);
+          console.error(err);
+          res.status(500).send('Error: ' + err);
       });
-  }
-);
+});
 
 
 //-- default text response at /
