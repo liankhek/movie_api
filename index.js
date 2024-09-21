@@ -6,9 +6,6 @@ const express = require("express"),
       mongoose = require("mongoose"),
       Models = require("./models.js");
 
-require('dotenv').config();
-
-
 mongoose.connect(process.env.CONNECTION_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
