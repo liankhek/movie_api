@@ -198,24 +198,18 @@ async(req, res) => {
 );
 
 // return JSON object at /movies
-app.get("/movies", async (req, res) => {
-  try {
-    const movies = await Movies.find();
-    const formattedMovies = movies.map((movie) => ({
-      Title: movie.Title,
-      _id: movie._id,
-      Description: movie.Description,
-      Genre: movie.Genre,
-      Director: movie.Director,
-      ImagePath: movie.ImagePath,
-      Featured: movie.Featured,
-    }));
-    res.status(201).json(formattedMovies);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Error: " + err);
+app.get("/movies", passport.authenticate("jwt", { session: false }),
+async (req, res) => {
+    Movies.find()
+      .then ((movies) => {
+          res.status(201).json(movies);
+      })
+      .catch((err) => {
+          console.error(err);
+          res.status(500).send("Error: " + err);
+      });
   }
-});
+);
 
 // READ title
 app.get("/movies/:Title", passport.authenticate("jwt", { session: false }),
