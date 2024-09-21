@@ -143,31 +143,25 @@ let hashedPassword = Users.hashPassword(req.body.Password);
   }
 );
 
-// Add Movie with Movie Name
-// Add Movie with Movie Name
+// Add Movie with Movie ID
 app.post(
-  "/users/:Username/movies/:movieName",
+  "/users/:Username/movies/:MovieID",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    try {
-      // Find the movie by name
-      const movie = await Movies.findOne({ Title: req.params.movieName });
-      if (!movie) {
-        return res.status(404).send("Movie not found");
-      }
-
-      // Update user's favorite movies with the movie ID
-      const updatedUser = await Users.findOneAndUpdate(
-        { Username: req.params.Username },
-        { $push: { FavoriteMovies: movie._id } },
-        { new: true }
-      );
-
-      res.json(updatedUser);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    }
+    await Users.findOneAndUpdate(
+      { Username: req.params.Username },
+      {
+        $push: { FavoriteMovies: req.params.MovieID },
+      },
+      { new: true }
+    ) // This line makes sure that the updated document is returned
+      .then((updatedUser) => {
+        res.json(updatedUser);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
   }
 );
 
