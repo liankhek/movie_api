@@ -108,13 +108,13 @@ app.post(
     check("Email", "Email does not appear to be valid").isEmail(),
   ],
   async (req, res) => {
-    let errors = validationResult(req);
+let errors = validationResult(req);
 
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
 
-    let hashedPassword = Users.hashPassword(req.body.Password);
+let hashedPassword = Users.hashPassword(req.body.Password);
 
     await Users.findOne({ Username: req.body.Username })
       .then((user) => {
@@ -288,7 +288,7 @@ app.put('/users/:Username', passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const errors = validationResult(req);
 
-    if (!error.isEmpty()) {
+    if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
     }
     // Condition to check user
@@ -335,35 +335,6 @@ async (req, res) => {
       console.error(err);
       res.status(500).send('Error: ' + err);
     });
-  }
-);
-
-// Add Favorite movie to user's movie list
-app.post("/users/:Username/movies/:movieName", passport.authenticate("jwt", { session: false }),
-  (req, res) => {
-    const { Username, movieName } = req.params;
-    Movies.findOne({ Title: movieName })
-      .then((movie) => {
-          if (!movie) {
-              return res.status(404).send("Movie not found");
-          }
-          Users.findOneAndUpdate(
-              { Username: Username },
-              { $push: { FavoriteMovies: movie._id } },
-              { new: true }
-          )
-              .then((updatedUser) => {
-                  res.json(updatedUser);
-              })
-              .catch((err) => {
-                  console.error(err);
-                  res.status(500).send("Error: " + err);
-              });
-      })
-      .catch((err) => {
-          console.error(err);
-          res.status(500).send("Error: " + err);
-      });
   }
 );
 
