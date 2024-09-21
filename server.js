@@ -38,5 +38,5 @@ const server = http.createServer((request, response) => { //request handler func
 
 }).listen(8080); //the server is set to listen for requests(response) on port 8080
 
-console.log("Node Server is running on Port 8080");
+console.log("Node Server is running on Port 3000");
 
