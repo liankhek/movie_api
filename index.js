@@ -348,10 +348,10 @@ async (req, res) => {
         { new: true }
     )
     .then((updatedUser) => {
-        if (!updatedUser) {
-            return res.status(404).send("User not found");
-        }
-        res.json(updatedUser);
+      if (!updatedUser) {
+          return res.status(404).send("User not found");
+      }
+      res.json(updatedUser);
     })
     .catch((error) => {
         console.error(error);
