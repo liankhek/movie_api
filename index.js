@@ -1,4 +1,5 @@
 const { error } = require("console");
+const bodyParser = require('body-parser');
 const express = require("express"),
       morgan = require("morgan"),
 //      fs = require("fs"),
@@ -6,12 +7,11 @@ const express = require("express"),
       mongoose = require("mongoose"),
       Models = require("./models.js");
 
-mongoose.connect(process.env.CONNECTION_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Database connected successfully'))
-.catch((err) => console.log('Error connecting to database:', err));
+const { check, validationResult } = require("express-validator");
+check(
+  "Username",
+  "Username contains non-alphanumeric characters - not allowed."
+).isAlphanumeric();
 
 const Movies = Models.Movie,
       Users = Models.User,
@@ -19,23 +19,28 @@ const Movies = Models.Movie,
       Directors = Models.Director;
 
 const app = express();
+
+require('dotenv').config();
+
+const uri = process.env.CONNECTION_URI || 'mongodb+srv://liankhek:Themongo24@myflixdb.si0ifdy.mongodb.net/myFlixDB?retryWrites=true&w=majority';
+
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.then(() => console.log('Database connected successfully'))
+.catch((err) => console.log('Error connecting to database:', err));
+
+app.use(express.static('public')); // Get documentation file
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-const { check, validationResult } = require("express-validator");
-check(
-  "Username",
-  "Username contains non-alphanumeric characters - not allowed."
-).isAlphanumeric();
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require("cors");
-let allowedOrigins = [
-  "http://localhost:8080",
-  "https://myflixmovies123-d3669f5b95da.herokuapp.com/",
-];
 
 app.use(
-  cors({
+  cors(
+    /*{
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
@@ -47,7 +52,8 @@ app.use(
       }
       return callback(null, true);
     },
-  })
+  }*/
+  )
 );
 
 // Allows Mongoose to connect to the database
@@ -74,17 +80,18 @@ app.use(cors({
   }
 }));
  */
+// Morgan middleware
+app.use(morgan("combined"));
 
 let auth = require('./auth')(app); // ensures that Express is available in “auth.js” file
 
 const passport = require('passport');
 require('./passport');
 
-// Serve static files
-app.use(express.static("public"));
-
-// Morgan middleware
-app.use(morgan("common"));
+//-- default text response at /
+app.get("/", (req, res) => {
+  res.send("Welcome to myFlix!");
+});
 
 //-- CREATE --
 //--Add/Register user --
@@ -143,10 +150,24 @@ let hashedPassword = Users.hashPassword(req.body.Password);
   }
 );
 
+// Get a user by username
+app.get('/users/:Username', passport.authenticate('jwt', { session: false }), async(req,res) => {
+  await Users.findOne({Username: req.params.Username})
+  .then((user) => {
+    if (user) {
+      res.json(user);
+    } else {
+      res.status(404).send('user with the username' + req.params.Username + 'was not found.');
+    }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+  });
+
 // Add Movie with Movie ID
-app.post(
-  "/users/:Username/movies/:MovieID",
-  passport.authenticate("jwt", { session: false }),
+app.post( "/users/:Username/movies/:MovieID", /*passport.authenticate("jwt", { session: false }),*/
   async (req, res) => {
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -165,12 +186,6 @@ app.post(
   }
 );
 
-
-//-- default text response at /
-app.get("/", (req, res) => {
-    res.send("Welcome to myFlix!");
-});
-
 // Get all users
 app.get("/users", passport.authenticate("jwt", { session: false }),
 async (req, res) => {
@@ -185,19 +200,6 @@ async (req, res) => {
   }
 );
 
-// Get a user by username
-app.get("/users/:Username", passport.authenticate("jwt", { session: false }),
-async(req, res) => {
-  await Users.findOne({ Username: req.params.Username })
-    .then((users) => {
-      res.json(users);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-  }
-);
 
 // return JSON object at /movies
 app.get("/movies", passport.authenticate("jwt", { session: false }),
@@ -215,17 +217,21 @@ async (req, res) => {
 
 // READ title
 app.get("/movies/:Title", passport.authenticate("jwt", { session: false }),
-(req, res) => {
-  Movies.findOne({ Title: req.params.Title })
+async (req, res) => {
+  await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
-      res.json(movie);
+      if (movie) {
+        res.json(movie);
+      } 
+      else {
+        res.status(404).send(
+          'Movie with the title ' +
+            req.params.Title +
+              ' was not found.'
+        );
+      }
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send("Error: " + err);
-    });
-  }
-);
+});
 
 // GET JSON list Genres
 app.get('/movies/genres', (req, res) => {
@@ -370,7 +376,7 @@ app.use((err, req, res, next) => {
 });
 
 // listen on port
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 app.listen(port, '0.0.0.0',() => {
  console.log('Listening on Port ' + port);
 });
