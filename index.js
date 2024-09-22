@@ -167,7 +167,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
   });
 
 // Add Movie with Movie ID
-app.post( "/users/:Username/movies/:MovieID", /*passport.authenticate("jwt", { session: false }),*/
+app.post( "/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
