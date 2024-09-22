@@ -22,14 +22,7 @@ const app = express();
 
 require('dotenv').config();
 
-const uri = process.env.CONNECTION_URI || 'mongodb+srv://liankhek:Themongo24@myflixdb.si0ifdy.mongodb.net/myFlixDB?retryWrites=true&w=majority';
-
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('Database connected successfully'))
-.catch((err) => console.log('Error connecting to database:', err));
+mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(express.static('public')); // Get documentation file
 app.use(express.json());
