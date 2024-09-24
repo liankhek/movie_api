@@ -160,7 +160,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
   });
 
 // Add Movie with Movie ID
-app.post( "/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }),
+/*app.post( "/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -176,6 +176,38 @@ app.post( "/users/:Username/movies/:MovieID", passport.authenticate("jwt", { ses
         console.error(err);
         res.status(500).send("Error: " + err);
       });
+  }
+);
+*/
+
+app.post("/users/:Username/movies/:movieName", 
+  passport.authenticate("jwt", { session: false }), 
+  async (req, res) => {
+    const { Username, movieName } = req.params;
+    
+    try {
+      const movie = await Movies.findOne({ Title: movieName });
+
+      if (!movie) {
+        return res.status(404).send("Movie not found");
+      }
+
+      const updatedUser = await Users.findOneAndUpdate(
+        { Username: Username },
+        { $push: { FavoriteMovies: movie._id } },
+        { new: true }
+      );
+
+      if (!updatedUser) {
+        return res.status(404).send("User not found");
+      }
+
+      res.json(updatedUser);
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    }
   }
 );
 
