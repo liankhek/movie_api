@@ -181,7 +181,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
 */
 
 app.post("/users/:Username/movies/:movieName", 
-  /*passport.authenticate("jwt", { session: false }), */
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { Username, movieName } = req.params;
     
