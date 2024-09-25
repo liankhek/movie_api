@@ -31,48 +31,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require("cors");
 
-app.use(
-  cors(
-    /*{
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        // If a specific origin isn’t found on the list of allowed origins
-        let message =
-          "The CORS policy for this application doesn’t allow access from origin " +
-          origin;
-        return callback(new Error(message), false);
-      }
-      return callback(null, true);
-    },
-  }*/
-  )
-);
-
-// Allows Mongoose to connect to the database
-//mongoose.connect("mongodb://localhost:27017/myflixDB", { useNewUrlParser: true, useUnifiedTopology: true });
-
-/*Midlware(log requestss to server)
-app.use(morgan("common"));
-app.use(bodyParser.json());
-
-const cors = require('cors');
 app.use(cors());
-//Want only certain origins to be given access,replace app.use(cors()); with the following code:
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
-
-app.use(cors({
-  origin: (origin, callback) => {
-    if(!origin) return callback(null, true);
-    if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
-      let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-      return callback(new Error(message ), false);
-    }
-    return callback(null, true);
-  }
-}));
- */
 // Morgan middleware
 app.use(morgan("combined"));
 
@@ -159,29 +119,8 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
     });
   });
 
-// Add Movie with Movie ID
-/*app.post( "/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }),
-  async (req, res) => {
-    await Users.findOneAndUpdate(
-      { Username: req.params.Username },
-      {
-        $push: { FavoriteMovies: req.params.MovieID },
-      },
-      { new: true }
-    ) // This line makes sure that the updated document is returned
-      .then((updatedUser) => {
-        res.json(updatedUser);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send("Error: " + err);
-      });
-  }
-);
-*/
-
 app.post("/users/:Username/movies/:movieName", 
-  passport.authenticate("jwt", { session: false }),
+  /*passport.authenticate("jwt", { session: false }),*/
   async (req, res) => {
     const { Username, movieName } = req.params;
     
@@ -227,7 +166,7 @@ async (req, res) => {
 
 
 // return JSON object at /movies
-app.get("/movies", passport.authenticate("jwt", { session: false }),
+app.get("/movies", /*passport.authenticate("jwt", { session: false }),*/
 async (req, res) => {
     Movies.find()
       .then ((movies) => {
@@ -241,7 +180,7 @@ async (req, res) => {
 );
 
 // READ title
-app.get("/movies/:Title", passport.authenticate("jwt", { session: false }),
+app.get("/movies/:Title", /*passport.authenticate("jwt", { session: false }),*/
 async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
@@ -273,7 +212,7 @@ app.get('/movies/genres', (req, res) => {
 );
 
 // GET Genre by name
-app.get("/movies/genre/:genreName", passport.authenticate("jwt", { session: false }),
+app.get("/movies/genre/:genreName", /*passport.authenticate("jwt", { session: false }),*/
   (req, res) => {
     Movies.findOne({ "Genre.Name": req.params.genreName }) // Updated to match schema
       .then((genre) => {
@@ -291,7 +230,7 @@ app.get("/movies/genre/:genreName", passport.authenticate("jwt", { session: fals
 );
 
 // GET director by name
-app.get("/movies/director/:directorName", passport.authenticate("jwt", { session: false }),
+app.get("/movies/director/:directorName", /*passport.authenticate("jwt", { session: false }),*/
 (req, res) => {
     Movies.findOne({ "Director.Name": req.params.directorName })
       .then((director) => {
@@ -372,7 +311,7 @@ async (req, res) => {
 );
 
 // Remove favorite movie form user's list
-app.delete("/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }),
+app.delete("/users/:Username/movies/:MovieID", /*passport.authenticate("jwt", { session: false }),*/
 async (req, res) => {
     await Users.findOneAndUpdate (
         { Username: req.params.Username },
