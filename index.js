@@ -24,8 +24,8 @@ require('dotenv').config();
 
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const cors = require('cors');
-app.use(cors());
+/*const cors = require('cors');
+app.use(cors());*/
 
 app.use(express.static('public')); // Get documentation file
 app.use(express.json());
