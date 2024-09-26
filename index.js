@@ -27,8 +27,6 @@ mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifie
 //app.use(cors());
 const cors = require('cors');
 
-
-
 app.use(express.static('public')); // Get documentation file
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
