@@ -31,7 +31,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const cors = require('cors');
 
-const allowedOrigins = ['http://localhost:3000', 'https://da-flix-1a4fa4a29dcc.herokuapp.com/'];
+const allowedOrigins = ['http://localhost:3000', 'https://da-flix-1a4fa4a29dcc.herokuapp.com'];
 
 app.use(cors({
   origin: function (origin, callback) {
