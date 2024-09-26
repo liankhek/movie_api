@@ -7,6 +7,7 @@ const express = require("express"),
       mongoose = require("mongoose"),
       Models = require("./models.js");
 
+
 const { check, validationResult } = require("express-validator");
 check(
   "Username",
@@ -29,9 +30,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const cors = require("cors");
+const allowedOrigins = ['http://localhost:3000', 'https://da-flix-1a4fa4a29dcc.herokuapp.com/'];
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+}));
 
 // Morgan middleware
 app.use(morgan("combined"));
@@ -252,45 +261,46 @@ app.get("/movies/director/:directorName", /*passport.authenticate("jwt", { sessi
 // Update user info by username
 app.put('/users/:Username', passport.authenticate("jwt", { session: false }),
   [
-      check("Username", "Username must be at least 5 characters").isLength({ min: 5 }),
-      check("Username", "Username can only contain alphanumeric characters").isAlphanumeric(),
-      check("Email", "Invalid email address").isEmail(),
-      check("Password", "Password must not be empty").not().isEmpty()
+    check("Username", "Username must be at least 5 characters").isLength({ min: 5 }),
+    check("Username", "Username can only contain alphanumeric characters").isAlphanumeric(),
+    check("Email", "Invalid email address").isEmail(),
+    check("Password", "Password must not be empty").not().isEmpty()
   ],
   async (req, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+      return res.status(422).json({ errors: errors.array() });
     }
-    // Condition to check user
-    if(req.user.Username !== req.params.Username){
-        return res.status(400).send("Permission denied");
+
+    if(req.user.Username !== req.params.Username) {
+      return res.status(400).send("Permission denied");
     }
-    // Condition End
-    await Users.findOneAndUpdate (
-      { Username: req.params.Username }, 
-      { 
-        $set:
-          {
-              Username: req.body.Username,
-              Password: req.body.Password,
-              Email: req.body.Email,
-              Birthday: req.body.Birthday
-          }
+
+    const hashedPassword = Users.hashPassword(req.body.Password);
+
+    await Users.findOneAndUpdate(
+      { Username: req.params.Username },
+      {
+        $set: {
+          Username: req.body.Username,
+          Password: hashedPassword,  // Use hashed password here
+          Email: req.body.Email,
+          Birthday: req.body.Birthday
+        }
       },
-      { new: true } // This line makes sure that the updated document is returned
-    ) 
-      .then((updatedUser) => {
-        res.json(updatedUser);
-      })
-      .catch((err) => {
-          console.error(err);
-          res.status(500).send("Error: " + err);
-      });
-  
+      { new: true }
+    )
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send("Error: " + err);
+    });
   }
 );
+
 
 // Delete user by user name
 app.delete('/users/:Username', passport.authenticate("jwt", { session: false }),
