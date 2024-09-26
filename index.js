@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const express = require("express"),
       morgan = require("morgan"),
 //      fs = require("fs"),
-//      path = require("path"),
+      path = require("path"),
       mongoose = require("mongoose"),
       Models = require("./models.js");
 
@@ -24,13 +24,13 @@ require('dotenv').config();
 
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+const cors = require('cors');
+app.use(cors());
+
 app.use(express.static('public')); // Get documentation file
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
-
-const cors = require('cors');
-app.use(cors());
 
 // Morgan middleware
 app.use(morgan("combined"));
