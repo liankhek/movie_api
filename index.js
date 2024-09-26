@@ -29,10 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const cors = require('cors');
-
-const allowedOrigins = ['http://localhost:3000', 'https://da-flix-1a4fa4a29dcc.herokuapp.com'];
-
+cconst cors = require("cors");
+const allowedOrigins = ['http://localhost:3000', 'https://your-heroku-app.herokuapp.com'];
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
@@ -42,7 +40,6 @@ app.use(cors({
     }
   }
 }));
-
 
 // Morgan middleware
 app.use(morgan("combined"));
