@@ -132,7 +132,7 @@ app.get('/users/:Username', passport.authenticate('jwt', { session: false }), as
   });
 
 app.post("/users/:Username/movies/:movieName", 
-  /*passport.authenticate("jwt", { session: false }),*/
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     const { Username, movieName } = req.params;
     
@@ -178,7 +178,7 @@ async (req, res) => {
 
 
 // return JSON object at /movies
-app.get("/movies", /*passport.authenticate("jwt", { session: false }),*/
+app.get("/movies", passport.authenticate("jwt", { session: false }),
 async (req, res) => {
     Movies.find()
       .then ((movies) => {
@@ -192,7 +192,7 @@ async (req, res) => {
 );
 
 // READ title
-app.get("/movies/:Title", /*passport.authenticate("jwt", { session: false }),*/
+app.get("/movies/:Title", passport.authenticate("jwt", { session: false }),
 async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
@@ -224,7 +224,7 @@ app.get('/movies/genres', (req, res) => {
 );
 
 // GET Genre by name
-app.get("/movies/genre/:genreName", /*passport.authenticate("jwt", { session: false }),*/
+app.get("/movies/genre/:genreName", passport.authenticate("jwt", { session: false }),
   (req, res) => {
     Movies.findOne({ "Genre.Name": req.params.genreName }) // Updated to match schema
       .then((genre) => {
@@ -242,7 +242,7 @@ app.get("/movies/genre/:genreName", /*passport.authenticate("jwt", { session: fa
 );
 
 // GET director by name
-app.get("/movies/director/:directorName", /*passport.authenticate("jwt", { session: false }),*/
+app.get("/movies/director/:directorName", passport.authenticate("jwt", { session: false }),
 (req, res) => {
     Movies.findOne({ "Director.Name": req.params.directorName })
       .then((director) => {
@@ -323,7 +323,7 @@ async (req, res) => {
 );
 
 // Remove favorite movie form user's list
-app.delete("/users/:Username/movies/:MovieID", /*passport.authenticate("jwt", { session: false }),*/
+app.delete("/users/:Username/movies/:MovieID", passport.authenticate("jwt", { session: false }),
 async (req, res) => {
     await Users.findOneAndUpdate (
         { Username: req.params.Username },
