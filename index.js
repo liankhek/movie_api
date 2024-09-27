@@ -20,6 +20,8 @@ const Movies = Models.Movie,
 
 const app = express();
 
+require('dotenv').config();
+
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 //app.use(cors());
