@@ -26,7 +26,7 @@ mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifie
 
 //app.use(cors());
 const cors = require('cors');
-const allowedOrigins = ['http://localhost:1234', 'http://localhost:54028', 'https://da-flix-1a4fa4a29dcc.herokuapp.com'];
+const allowedOrigins = ['http://localhost:1234', 'http://localhost:55932', 'http://localhost:54028', 'https://da-flix-1a4fa4a29dcc.herokuapp.com'];
 
 app.use(cors({
   origin: function (origin, callback) {
