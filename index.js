@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const express = require("express"),
       morgan = require("morgan"),
 //      fs = require("fs"),
-//      path = require("path"),
+      path = require("path"),
       mongoose = require("mongoose"),
       Models = require("./models.js");
 
@@ -25,22 +25,26 @@ require('dotenv').config();
 
 mongoose.connect( process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
+//app.use(cors());
+const cors = require('cors');
+const allowedOrigins = ['http://localhost:1234', 'https://da-flix-1a4fa4a29dcc.herokuapp.com'];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
+}));
+
 app.use(express.static('public')); // Get documentation file
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(bodyParser.urlencoded({ extended: true }));
-
-const allowedOrigins = ['http://localhost:3000', 'https://da-flix-1a4fa4a29dcc.herokuapp.com/'];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-}));
 
 // Morgan middleware
 app.use(morgan("combined"));
